@@ -18,7 +18,7 @@ shot = 6000
 
 seed = 3
 number_of_qubits = 3
-steps = 50 #Choose number of steps to interpolate from initial to final Hamiltonian
+steps = 1 #Choose number of steps to interpolate from initial to final Hamiltonian
 connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware Efficient ansatz
 single_qubit_gates = 'ry'
 entanglement_gates = 'cz'
@@ -33,7 +33,7 @@ molecule = MoleculeInfo(
         charge=0
 )
 taper='JordanWigner'
-freezecore=2
+freezecore=1
 
 #graph = nx.random_regular_graph(3, number_of_qubits, seed=seed)
 #w = nx.to_numpy_matrix(graph, nodelist=sorted(graph.nodes()))
@@ -44,12 +44,18 @@ problem = {'type':'MaxCut', 'properties': w}
 
 #my_molecule=Moleculeclass(molecule,'Parity',2)
 #print(my_molecule.get_qubit_operator())
+qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 
-# aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
-# aavqechem.run()
-# print(aavqechem.minimum_eigenvalue())
+mat=qubitop.to_matrix()
+print(np.min(np.linalg.eig(mat)[0]))
+#aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 
-Solvebynumpy(molecule).run()
+#myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'transverse',qubitop)
+
+#print(myaavqe.get_instantaneous_hamiltonian(1))
+#print(aavqechem.minimum_eigenvalue())
+
+#Solvebynumpy(molecule).run()
 #np.random.seed(2)
 #Brute_Force(problem)
 
@@ -62,3 +68,4 @@ Solvebynumpy(molecule).run()
 #aqc_pqc = AQC_PQC(number_of_qubits, problem, steps, layers, single_qubit_gates,
 #                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
 #aqc_pqc.run()
+

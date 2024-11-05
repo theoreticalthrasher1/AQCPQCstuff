@@ -42,7 +42,6 @@ molecule = MoleculeInfo(
         charge=0
 )
 
-print(Moleculeclass(molecule,'JordanWigner',1).get_qubit_operator())
 
 class Solvebynumpy():
     def __init__(self,molecule):
