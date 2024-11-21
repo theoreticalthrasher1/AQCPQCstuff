@@ -4,11 +4,11 @@ from qiskit_optimization.applications import Maxcut, NumberPartition
 
 class Hamiltonian():
 
-
     def __init__(self, problem):
         self.problem_type = problem['type']
         self.problem_properties = problem['properties']
 
+    
 
     def get_pauli_operator_and_offset(self):
         

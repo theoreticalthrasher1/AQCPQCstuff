@@ -4,6 +4,7 @@ from qiskit_nature.second_q.formats.molecule_info import MoleculeInfo
 from qiskit_nature.second_q.transformers import FreezeCoreTransformer
 from qiskit_algorithms import NumPyMinimumEigensolver
 from qiskit_nature.second_q.algorithms import GroundStateEigensolver
+from qiskit_nature.second_q.circuit.library import HartreeFock
 
 
 class Moleculeclass():
@@ -29,6 +30,8 @@ class Moleculeclass():
         else:
             raise ValueError("Unsupported tapering method. Choose 'JordanWigner' or 'Parity'.")
 
+    def get_hartreefock_state(self):
+        return HartreeFock(molecule)
     # Method to get the qubit operator if needed outside
    
     def get_qubit_operator(self):
