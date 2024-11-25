@@ -10,6 +10,7 @@ from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
 from qiskit_aer import Aer
+from ManualOperator import IBM_LiH
 backend = Aer.get_backend('statevector_simulator')
 
 #seeds=[20, 21, 30, 33, 36, 42, 43, 55, 67,170 ]
@@ -74,4 +75,6 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 #                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
 #aqc_pqc.run()
 #print(hf)
-myaavqe.run()
+#myaavqe.run()
+
+print(IBM_LiH)
