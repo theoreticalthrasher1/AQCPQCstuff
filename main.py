@@ -52,8 +52,7 @@ problem = {'type':'MaxCut', 'properties': w}
 qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 
 
-# mat=qubitop.to_matrix()
-# print(np.min(np.linalg.eig(mat)[0]))
+
 aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 
@@ -77,4 +76,7 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 #print(hf)
 #myaavqe.run()
 
-print(IBM_LiH)
+
+mat=IBM_LiH.to_matrix()
+print(np.min(np.linalg.eig(mat)[0]))
+
