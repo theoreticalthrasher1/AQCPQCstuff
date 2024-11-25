@@ -20,23 +20,24 @@ iterations = 125
 shot = 6000
 
 seed = 3
-number_of_qubits = 10
-steps = 10 #Choose number of steps to interpolate from initial to final Hamiltonian
+number_of_qubits = 8
+steps = 50 #Choose number of steps to interpolate from initial to final Hamiltonian
 connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware Efficient ansatz
 single_qubit_gates = 'ry'
 entanglement_gates = 'cz'
 layers = 1
 entanglement = 'linear'
-
+# distance=1.57
+distance=2.5
 molecule = MoleculeInfo(
         #Coordinates in Angstrom
         symbols=["Li", "H"],
-        coords=([0.0, 0.0, 0.0], [1.57, 0.0, 0.0]),
+        coords=([0.0, 0.0, 0.0], [distance, 0.0, 0.0]),
         multiplicity=1,  # = 2*spin + 1
         charge=0
 )
 taper='JordanWigner'
-freezecore=1
+freezecore=2
 
 #graph = nx.random_regular_graph(3, number_of_qubits, seed=seed)
 #w = nx.to_numpy_matrix(graph, nodelist=sorted(graph.nodes()))
