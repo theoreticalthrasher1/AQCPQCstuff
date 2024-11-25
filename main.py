@@ -47,17 +47,14 @@ problem = {'type':'MaxCut', 'properties': w}
 
 #my_molecule=Moleculeclass(molecule,'Parity',2)
 #print(my_molecule.get_qubit_operator())
-#qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 
-hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli(10)
-
-print(hf)
 
 # mat=qubitop.to_matrix()
 # print(np.min(np.linalg.eig(mat)[0]))
-#aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
-
-#myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'transverse',qubitop)
+aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
+hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli(10)
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
 
 #print(myaavqe.get_instantaneous_hamiltonian(1))
 #print(aavqechem.minimum_eigenvalue())
@@ -65,7 +62,6 @@ print(hf)
 #Solvebynumpy(molecule).run()
 #np.random.seed(2)
 #Brute_Force(problem)
-
 #aavqe = AAVQE(number_of_qubits, problem, steps, layers, single_qubit_gates, entanglement_gates, entanglement)
 #aavqe.run()
 
@@ -76,3 +72,4 @@ print(hf)
 #                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
 #aqc_pqc.run()
 
+myaavqe.run()
