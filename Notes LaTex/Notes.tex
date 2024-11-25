@@ -1,0 +1,75 @@
+\documentclass[]{article}
+%Make sure you do the escape shell thing! https://tex.stackexchange.com/questions/99475/how-to-invoke-latex-with-the-shell-escape-flag-in-texstudio-former-texmakerx 
+%this is alt shift f1
+%opening
+\usepackage[top=25mm,bottom=25mm,left=25mm,right=25mm]{geometry}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{minted}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{url}
+\usepackage{biblatex}
+%\usepackage{setspace} 
+%\usepackage{comment}
+%\\\usepackage{hyperref}
+%\\\usepackage{cleveref}
+\usepackage{subcaption}
+\usepackage{braket}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{tikz,lipsum,lmodern}
+\usepackage[most]{tcolorbox}
+\addbibresource{bibliography.bib}
+\newtheorem{theorem}{Theorem}[section] 
+\newtheorem{lemma}[theorem]{Lemma} 
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{cor}[theorem] {Corollary} 
+\newtheorem{remark}[theorem] {Remark} 
+\newtheorem{ass}[theorem] {Assumptions} 
+\theoremstyle{definition}
+\newtheorem{definition}[theorem] {Definition} 
+\newtheorem{conj}[theorem]{Conjecture} 
+\newtheorem{step}{STEP}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{example}[theorem] {Example}
+\newtheorem{idea}[theorem]{Idea}
+\newtheorem{claim}[theorem]{Claim}
+\newcommand{\nn}{\in \mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\bv}{\bibitem}
+\DeclareMathOperator{\Cor}{Cor}
+
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Var}{Var}
+
+\newtheorem{lem}{Lemma}
+\newtheorem{thm}{Theorem}
+
+\title{}
+\author{Sean Thrasher}
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+We note that doing freezecore twice, we obtain an incorrect value for energy. When you do freezecore once, you get around $ -7.8 $ hartree, whereas doing it twice, you get something closer to $ 0 $. 
+
+But doing freezecore twice is enormously expensive- it involves $ 10 $ qubits! Doing freezecore twice gets it down to eight qubits. The IBM paper manages to get it down to four! How can we do that without sacrificing significantly the accuracy? 
+
+Furthermore, note that in the IBM paper, they do it not with $ 1.57 $ but with $ 2.5 $ Armstrongs, arguing that the VQEs struggle with that. So I've added that as an option. 
+
+I manually included the $ 4 $-qubit Hamiltonian in the project to see what value it gives us as the lowest energy. 
+
+
+\printbibliography
+\end{document}
