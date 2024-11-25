@@ -1,3 +1,4 @@
+import numpy as np
 from qiskit_nature.second_q.drivers import PySCFDriver
 from qiskit_nature.second_q.mappers import JordanWignerMapper, ParityMapper
 from qiskit_nature.second_q.formats.molecule_info import MoleculeInfo
@@ -5,6 +6,9 @@ from qiskit_nature.second_q.transformers import FreezeCoreTransformer
 from qiskit_algorithms import NumPyMinimumEigensolver
 from qiskit_nature.second_q.algorithms import GroundStateEigensolver
 from qiskit_nature.second_q.circuit.library import HartreeFock
+from qiskit.quantum_info import SparsePauliOp
+from Auxiliary_functions import *
+from qiskit.quantum_info import Statevector
 
 
 class Moleculeclass():
@@ -29,11 +33,59 @@ class Moleculeclass():
             self.qubit_operator = ParityMapper().map(second_quantized_operators)
         else:
             raise ValueError("Unsupported tapering method. Choose 'JordanWigner' or 'Parity'.")
+    def get_hartreefock_in_pauli(self,num_qubits):
+        # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+        problem= self.electronic_structure_problem
+        # Get the Hartree-Fock state
+        hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
 
-    def get_hartreefock_state(self):
-        return HartreeFock(molecule)
-    # Method to get the qubit operator if needed outside
-   
+        state_vector= Statevector(hf_state)
+        binary_string=state_vector.probabilities_dict()
+        binary_string= get_string_from_dict(binary_string)
+        pauli_op= create_z_operator_from_binary_string(binary_string)
+        return pauli_op
+        
+    
+
+
+    # def get_hartreefock_state(self,num_qubits):
+    #     # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+    #     problem= self.electronic_structure_problem
+    #     # Get the Hartree-Fock state
+    #     hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+
+    #     state_vector= Statevector(hf_state)
+    #     result=state_vector.probabilities_dict()
+    #     # Determine the key and value from the result
+    #     key = list(result.keys())[0]  # Binary string (e.g., '0000100001')
+    #     value = list(result.values())[0]  # Value to encode (e.g., 1.0)
+
+    #     # Create a vector of zeros based on the length of the key
+    #     vector_length = len(key)
+    #     vector = np.zeros(vector_length, dtype=np.float64)
+
+    #     # Populate the vector based on the binary string
+    #     for idx, bit in enumerate(key):
+    #         if bit == '1':  # Check for '1' in the binary string
+    #             vector[idx] = value
+    #     return vector
+    # def get_hartreefock_state(self, num_qubits):
+    # # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+    #     problem = self.electronic_structure_problem
+        
+    #     # Get the Hartree-Fock state as a quantum circuit
+    #     hf_state_circuit = HartreeFock(
+    #         num_spatial_orbitals=problem.num_spatial_orbitals,
+    #         num_particles=problem.num_particles,
+    #         qubit_mapper=JordanWignerMapper()
+    #     )
+        
+    #     # Convert the circuit to a statevector
+    #     state_vector = Statevector.from_instruction(hf_state_circuit)
+        
+    #     # Return the statevector as a NumPy array
+    #     return state_vector.data
+
     def get_qubit_operator(self):
         return self.qubit_operator
     
@@ -56,6 +108,7 @@ class Solvebynumpy():
         calc = GroundStateEigensolver(mapper, numpy_solver)
         res = calc.solve(self.electronic_structure_problem)
         print(res)
+
 
 
    

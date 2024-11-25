@@ -2,6 +2,7 @@ import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_optimization.applications import Maxcut, NumberPartition
 
+
 class Hamiltonian():
 
     def __init__(self, problem):

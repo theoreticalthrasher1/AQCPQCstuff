@@ -10,6 +10,9 @@ from aqc_qaoa import AQC_PQC_QAOA
 from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
+from qiskit_aer import Aer
+backend = Aer.get_backend('statevector_simulator')
+
 #seeds=[20, 21, 30, 33, 36, 42, 43, 55, 67,170 ]
 seeds=67
 algorithm_globals.random_seed= seeds
@@ -45,10 +48,14 @@ problem = {'type':'MaxCut', 'properties': w}
 
 #my_molecule=Moleculeclass(molecule,'Parity',2)
 #print(my_molecule.get_qubit_operator())
-qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+#qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 
-mat=qubitop.to_matrix()
-print(np.min(np.linalg.eig(mat)[0]))
+hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli(10)
+
+print(hf)
+
+# mat=qubitop.to_matrix()
+# print(np.min(np.linalg.eig(mat)[0]))
 #aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'transverse',qubitop)
