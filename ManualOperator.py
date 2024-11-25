@@ -15,6 +15,14 @@ part_1= [
     ("ZIZI", -0.096556), ("ZIXX",  0.018582), ("ZIZX", -0.012909), ("XZXZ", -0.009880), ("XIZX",  0.006835),
     ("ZZZZ",  0.079438), ("ZIYY", -0.018582)]
 
+
+# Separate Pauli strings and coefficients
+pauli_strings = [term[0] for term in part_1]  # Extracts "IIII", "IZXX"
+coefficients = [term[1] for term in part_1]  # Extracts 0.567662, -0.025425
+
+# Create the SparsePauliOp
+sparse_pauli_op = SparsePauliOp(pauli_strings, coefficients)
+
 coefficients = [
     0.012909, 0.009880, -0.006835, -0.060240, 0.017442, -0.011861, 0.009298, -0.004511,
     0.060240, -0.017442, 0.011861, 0.009298, -0.004511, -0.053253, 0.017442, -0.011861,
@@ -34,7 +42,7 @@ pauli_strings = [
 ]
 
 # Create the SparsePauliOp
-sparse_pauli_op = SparsePauliOp(pauli_strings, coefficients)
+sparse_pauli_op += SparsePauliOp(pauli_strings, coefficients) 
 
 # Output the SparsePauliOp
 print(sparse_pauli_op)
