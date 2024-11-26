@@ -9,8 +9,15 @@ from qiskit_nature.second_q.circuit.library import HartreeFock
 from qiskit.quantum_info import SparsePauliOp
 from Auxiliary_functions import *
 from qiskit.quantum_info import Statevector
+from qiskit.primitives import Estimator
 
-
+molecule = MoleculeInfo(
+        #Coordinates in Angstrom
+        symbols=["Li", "H"],
+        coords=([0.0, 0.0, 0.0], [1.57, 0.0, 0.0]),
+        multiplicity=1,  # = 2*spin + 1
+        charge=0
+)
 class Moleculeclass():
     def __init__(self, molecule, taper,freezecore):
         self.molecule = molecule
@@ -33,6 +40,21 @@ class Moleculeclass():
             self.qubit_operator = ParityMapper().map(second_quantized_operators)
         else:
             raise ValueError("Unsupported tapering method. Choose 'JordanWigner' or 'Parity'.")
+    def get_hartreefock_energy(self):
+         # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+        problem= self.electronic_structure_problem
+        # Get the Hartree-Fock state
+        hf_circuit = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+        state_vector= Statevector(hf_circuit)
+        # Use Estimator to calculate the Hartree-Fock energy
+        estimator = Estimator()
+        result = estimator.run(
+            circuits=[hf_circuit],
+            observables=[self.qubit_operator]
+        ).result()
+
+        return result.values[0]
+
     def get_hartreefock_in_pauli(self):
         # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
         problem= self.electronic_structure_problem
@@ -89,13 +111,7 @@ class Moleculeclass():
     def get_qubit_operator(self):
         return self.qubit_operator
     
-molecule = MoleculeInfo(
-        #Coordinates in Angstrom
-        symbols=["Li", "H"],
-        coords=([0.0, 0.0, 0.0], [1.57, 0.0, 0.0]),
-        multiplicity=1,  # = 2*spin + 1
-        charge=0
-)
+
 
 
 class Solvebynumpy():
