@@ -59,8 +59,8 @@ myaavqe.run()
 #myaavqe.run()
 
 #For calculating the ground state energy manually:
-mat=IBM_LiH.to_matrix()
-print(np.min(np.linalg.eig(mat)[0]))
+# mat=IBM_LiH.to_matrix()
+# print(np.min(np.linalg.eig(mat)[0]))
 
 
 
