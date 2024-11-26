@@ -53,8 +53,9 @@ print(ref_value)
 
 
 class My_AAVQE():
-    def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian):
-        self.number_of_qubits = number_of_qubits    
+    def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian,initial_state=None):
+        self.number_of_qubits = number_of_qubits 
+        self.initial_state=initial_state   
         self.steps = steps
         self.string_initial_hamiltonian=initial_hamiltonian
         self.string_final_hamiltonian=target_hamiltonian
@@ -80,8 +81,10 @@ class My_AAVQE():
         # Now setting up the quantum circuit. 
         self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
 
-        self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
-        self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers)
+       #
+       # self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
+        self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+        self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers,initial_state= self.initial_state)
         #this is already in the general parameter form. 
         self.number_of_parameters = len(self.initial_parameters)
 
@@ -122,13 +125,15 @@ class My_AAVQE():
 
     def run(self):
         
-        energies_aavqe = []
-        energies_exact = []
-
         lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
         
     
         optimal_thetas = self.initial_parameters.copy()
+        instantaneous_expectation_value=self.get_expectation_value(optimal_thetas,self.initial_hamiltonian)
+        initial_ground_state=self.minimum_eigenvalue(self.initial_hamiltonian)
+        energies_aavqe = [instantaneous_expectation_value]
+        energies_exact = [initial_ground_state]
+
         print(f'We start with the optimal angles of the initial hamiltonian: {optimal_thetas}')
 
 
@@ -151,8 +156,8 @@ class My_AAVQE():
             print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
 #Question now is how will we compute the true expectation value? Will we do it from the Hamiltonian that was created? 
 
-        plt.plot(lambdas,energies_aavqe,label='aavqe energy')
-        plt.plot(lambdas,energies_exact,label='true energy')
+        plt.plot(energies_aavqe,label='aavqe energy')
+        plt.plot(energies_exact,label='true energy')
         plt.legend()
         plt.xlabel('time')
         plt.ylabel('energy (Ha)')

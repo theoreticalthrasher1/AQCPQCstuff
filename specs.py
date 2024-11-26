@@ -3,13 +3,13 @@ from qiskit_nature.second_q.formats.molecule_info import MoleculeInfo
 from Quantum_Chemistry import Moleculeclass
 
 #Equilibrium bond length and the bond length explored in IBM paper both given:
-# distance=1.57
-distance=2.5
+distance=1.57
+#distance=2.5
 hamiltonian_methods = {
     'initial': {
         'qiskit_hf': {
             'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+            'generate': lambda molecule, taper, freezecore: -Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
         'qiskit_hf_and_energy': {
             'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',

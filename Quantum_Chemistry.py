@@ -40,6 +40,12 @@ class Moleculeclass():
             self.qubit_operator = ParityMapper().map(second_quantized_operators)
         else:
             raise ValueError("Unsupported tapering method. Choose 'JordanWigner' or 'Parity'.")
+    def get_hartreefock(self):
+        # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+        problem= self.electronic_structure_problem
+        # Get the Hartree-Fock state
+        hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+        return hf_state
     def get_hartreefock_energy(self):
          # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
         problem= self.electronic_structure_problem

@@ -13,6 +13,15 @@ from qiskit_aer import Aer
 #chemical accuracy
 backend = Aer.get_backend('statevector_simulator')
 
+#We've put a minus sign in front of the initial hf hamiltonian, 
+#final hamiltonian might be wrong? Also, we don't need an offset. 
+#We need to change the initial angles each time we choose a different initial hamiltonian. 
+#We also need to figure out angles for the LiH examples.
+#The energies were increasing linearly
+#Are we actually getting the correct qubit
+#remove unnecessary stuff, and make sure everything works on basic examples, then we can scale it up. 
+
+
 # #seeds=[20, 21, 30, 33, 36, 42, 43, 55, 67,170 ]
 # seeds=67
 # algorithm_globals.random_seed= seeds
@@ -33,12 +42,11 @@ entanglement = 'linear'
 
 
 
-
 aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
-
+hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock()
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit')
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit',hfstate)
 myaavqe.run()
 #print(myaavqe.get_instantaneous_hamiltonian(1))
 #print(aavqechem.minimum_eigenvalue())
