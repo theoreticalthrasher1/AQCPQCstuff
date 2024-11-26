@@ -1,6 +1,6 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.11.25)  25 NOV 2024 22:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.11.25)  25 NOV 2024 22:51
 entering extended mode
- \write18 enabled.
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **Notes.tex
 (./Notes.tex
@@ -210,7 +210,7 @@ LaTeX Info: Redefining \addtolength on input line 81.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/shellesc.sty
 Package: shellesc 2019/11/08 v1.0c unified shell escape interface for LaTeX
-Package shellesc Info: Unrestricted shell escape enabled on input line 75.
+Package shellesc Info: Restricted shell escape enabled on input line 77.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ifplatform/ifplatform.sty
 Package: ifplatform 2017/10/13 v0.4a Testing for the operating system
@@ -235,13 +235,11 @@ Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/ifluatex.sty
 Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
 )
-runsystem(uname -s > "Notes.w18")...executed.
 
- (./Notes.w18)
-runsystem(rm -- "Notes.w18")...executed.
+Package ifplatform Warning: 
+    shell escape is disabled, so I can only detect \ifwindows.
 
-)
-(/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.sty
+) (/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.sty
 (/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.tex
 \integerpart=\count299
 \decimalpart=\count300
@@ -272,8 +270,20 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@every@listing=\toks32
 \c@listing=\count304
 )
-runsystem(mkdir -p _minted-Notes)...executed.
+runsystem(mkdir -p _minted-Notes)...disabled (restricted).
 
+
+
+! Package minted Error: You must invoke LaTeX with the -shell-escape flag.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.9 \usepackage
+               {amssymb}
+Pass the -shell-escape flag to LaTeX. Refer to the minted.sty documentation for
+ more information.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
@@ -1116,10 +1126,21 @@ Library (tcolorbox): 'tcbposter.code.tex' version '5.0.2'
  (/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 )
-runsystem(which pygmentize && touch Notes.aex)...executed.
+runsystem(which pygmentize && touch Notes.aex)...disabled (restricted).
 
-runsystem(rm Notes.aex)...executed.
 
+
+! Package minted Error: You must have `pygmentize' installed to use this packag
+e.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 \begin{document}
+                     
+Refer to the installation instructions in the minted documentation for more inf
+ormation.
 
 
 Package biblatex Warning: Load 'inputenc' before biblatex.
@@ -1244,7 +1265,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 65.
 
 
-LaTeX Warning: Empty bibliography on input line 75.
+LaTeX Warning: Empty bibliography on input line 83.
 
 [1
 
@@ -1254,10 +1275,10 @@ Package logreq Info: Writing requests to 'Notes.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 33394 strings out of 479574
- 705838 string characters out of 5877219
- 1541382 words of memory out of 5000000
- 50833 multiletter control sequences out of 15000+600000
+ 33389 strings out of 479574
+ 705784 string characters out of 5877219
+ 1542377 words of memory out of 5000000
+ 50831 multiletter control sequences out of 15000+600000
  502404 words of font info for 62 fonts, out of 8000000 for 9000
  395 hyphenation exceptions out of 8191
  84i,6n,96p,738b,801s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1267,7 +1288,7 @@ hare/texmf/fonts/type1/public/lm/lmbx9.pfb></usr/share/texmf/fonts/type1/public
 /lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/te
 xmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lms
 y10.pfb>
-Output written on Notes.pdf (1 page, 92732 bytes).
+Output written on Notes.pdf (1 page, 93069 bytes).
 PDF statistics:
  75 PDF objects out of 1000 (max. 8388607)
  37 compressed objects within 1 object stream

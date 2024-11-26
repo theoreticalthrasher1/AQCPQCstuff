@@ -1,5 +1,17 @@
 from qiskit.quantum_info import SparsePauliOp
 
+import numpy as np
+
+# Define Pauli strings and coefficients
+pauli_strings_initial= ['IIII', 'ZIII', 'IZII', 'IIZI', 'IIIZ']
+coefficients_initial = [0.568, -0.102, 0.245, 0.102, -0.245]
+
+# Create the SparsePauliOp
+pauli_op_initial = SparsePauliOp.from_list(list(zip(pauli_strings_initial, coefficients_initial)))
+
+# Display the SparsePauliOp
+
+
 
 part_1= [
     ("IIII",  0.567662), ("IZXX", -0.025425), ("ZXXX",  0.013812), ("XZYY", -0.011521), ("ZXZX", -0.008083),
@@ -43,6 +55,6 @@ pauli_strings = [
 
 # Create the SparsePauliOp
 IBM_LiH += SparsePauliOp(pauli_strings, coefficients) 
-
+IBM_LiH_initial= pauli_op_initial 
 # Output the SparsePauliOp
-print(IBM_LiH)
+#print(IBM_LiH,IBM_LiH_initial)

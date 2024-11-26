@@ -10,7 +10,7 @@ from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
 from qiskit_aer import Aer
-from ManualOperator import IBM_LiH
+from ManualOperator import IBM_LiH, IBM_LiH_initial
 backend = Aer.get_backend('statevector_simulator')
 
 #seeds=[20, 21, 30, 33, 36, 42, 43, 55, 67,170 ]
@@ -21,9 +21,9 @@ iterations = 125
 shot = 6000
 
 seed = 3
-number_of_qubits = 8
+number_of_qubits = 4
 steps = 50 #Choose number of steps to interpolate from initial to final Hamiltonian
-connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware Efficient ansatz
+connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware-Efficient ansatz
 single_qubit_gates = 'ry'
 entanglement_gates = 'cz'
 layers = 1
@@ -56,7 +56,10 @@ qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
+#myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,IBM_LiH_initial,IBM_LiH)
+
+
 
 #print(myaavqe.get_instantaneous_hamiltonian(1))
 #print(aavqechem.minimum_eigenvalue())
@@ -74,9 +77,9 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 #                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
 #aqc_pqc.run()
 #print(hf)
-#myaavqe.run()
+myaavqe.run()
 
 
-mat=IBM_LiH.to_matrix()
-print(np.min(np.linalg.eig(mat)[0]))
+#mat=IBM_LiH.to_matrix()
+#print(np.min(np.linalg.eig(mat)[0]))
 
