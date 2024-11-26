@@ -9,15 +9,20 @@ hamiltonian_methods = {
     'initial': {
         'qiskit_hf': {
             'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
+            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+        },
+        'qiskit_hf_and_energy': {
+            'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
             'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
+
         'paper': {
             'description': 'Use Hartree-Fock from a specific paper (custom implementation)',
             'generate': lambda molecule, taper, freezecore:IBM_LiH_initial
         }
     },
     'final': {
-        'qiskit_method ': {
+        'qiskit': {
             'description': 'Use final Hamiltonian from a paper-specific method',
             'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
         },

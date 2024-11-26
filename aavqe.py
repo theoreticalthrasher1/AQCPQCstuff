@@ -56,6 +56,8 @@ class My_AAVQE():
     def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian):
         self.number_of_qubits = number_of_qubits    
         self.steps = steps
+        self.string_initial_hamiltonian=initial_hamiltonian
+        self.string_final_hamiltonian=target_hamiltonian
         self.initial_hamiltonian = initial_hamiltonian
         self.target_hamiltonian=target_hamiltonian
         self.offset=0
@@ -63,6 +65,7 @@ class My_AAVQE():
         self.single_qubit_gates = single_qubit_gates
         self.entanglement_gates = entanglement_gates
         self.entanglement = entanglement
+        
         # Dealing with the initial hamiltonian
         if initial_hamiltonian == 'transverse':
             X_tuples = []
@@ -120,6 +123,7 @@ class My_AAVQE():
     def run(self):
         
         energies_aavqe = []
+        energies_exact = []
 
         lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
         
@@ -140,11 +144,20 @@ class My_AAVQE():
 
             inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
             energies_aavqe.append(inst_exp_value)
+            energies_exact.append(self.minimum_eigenvalue(hamiltonian) - lamda*self.offset)
             #print(f'and the hamiltonian right now is {hamiltonian} ')
+            
             print(f'and the instantaneous expectation values is {inst_exp_value}') 
             print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
 #Question now is how will we compute the true expectation value? Will we do it from the Hamiltonian that was created? 
 
+        plt.plot(lambdas,energies_aavqe,label='aavqe energy')
+        plt.plot(lambdas,energies_exact,label='true energy')
+        plt.legend()
+        plt.xlabel('time')
+        plt.ylabel('energy (Ha)')
+        plt.title(f'{self.string_initial_hamiltonian} and {self.string_final_hamiltonian}')
+        plt.show()
         return energies_aavqe
 
 
@@ -226,7 +239,6 @@ class AAVQE():
 
             minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
             optimal_thetas = minimization_object.x
-
 
             inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
             energies_aavqe.append(inst_exp_value)
