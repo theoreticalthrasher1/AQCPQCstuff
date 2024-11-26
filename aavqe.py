@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from Quantum_Chemistry import *
 from qiskit_algorithms.minimum_eigensolvers import NumPyMinimumEigensolver
 from qiskit_nature.second_q.algorithms import GroundStateEigensolver
+from specs import hamiltonian_methods, taper, freezecore, molecule 
+
 
 class AAVQE_on_Chemistry():
     def __init__(self, molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement):
@@ -71,9 +73,9 @@ class My_AAVQE():
             self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
         else:
 
-            self.initial_hamiltonian  = initial_hamiltonian
+            self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule, taper, freezecore)
         # Now setting up the quantum circuit. 
-
+        self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
 
         self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
         self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers)

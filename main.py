@@ -10,7 +10,7 @@ from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
 from qiskit_aer import Aer
-from ManualOperator import IBM_LiH, IBM_LiH_initial
+
 backend = Aer.get_backend('statevector_simulator')
 
 #seeds=[20, 21, 30, 33, 36, 42, 43, 55, 67,170 ]
@@ -26,30 +26,11 @@ steps = 50 #Choose number of steps to interpolate from initial to final Hamilton
 connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware-Efficient ansatz
 single_qubit_gates = 'ry'
 entanglement_gates = 'cz'
-layers = 1
+layers = 3
 entanglement = 'linear'
-# distance=1.57
-distance=2.5
-molecule = MoleculeInfo(
-        #Coordinates in Angstrom
-        symbols=["Li", "H"],
-        coords=([0.0, 0.0, 0.0], [distance, 0.0, 0.0]),
-        multiplicity=1,  # = 2*spin + 1
-        charge=0
-)
-taper='JordanWigner'
-freezecore=2
 
-#graph = nx.random_regular_graph(3, number_of_qubits, seed=seed)
-#w = nx.to_numpy_matrix(graph, nodelist=sorted(graph.nodes()))
 
-w = np.array([[0, 1 ,1], [1, 0 , 1], [1, 1, 0]])
 
-problem = {'type':'MaxCut', 'properties': w}
-
-#my_molecule=Moleculeclass(molecule,'Parity',2)
-#print(my_molecule.get_qubit_operator())
-qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
 
 
 
@@ -57,10 +38,8 @@ aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qu
 hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,IBM_LiH_initial,IBM_LiH)
-
-
-
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'paper','paper')
+myaavqe.run()
 #print(myaavqe.get_instantaneous_hamiltonian(1))
 #print(aavqechem.minimum_eigenvalue())
 
@@ -77,9 +56,18 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 #                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
 #aqc_pqc.run()
 #print(hf)
-myaavqe.run()
+#myaavqe.run()
+
+#For calculating the ground state energy manually:
+mat=IBM_LiH.to_matrix()
+print(np.min(np.linalg.eig(mat)[0]))
 
 
-#mat=IBM_LiH.to_matrix()
-#print(np.min(np.linalg.eig(mat)[0]))
 
+# Graph specifications:
+# #graph = nx.random_regular_graph(3, number_of_qubits, seed=seed)
+# #w = nx.to_numpy_matrix(graph, nodelist=sorted(graph.nodes()))
+
+# w = np.array([[0, 1 ,1], [1, 0 , 1], [1, 1, 0]])
+
+# problem = {'type':'MaxCut', 'properties': w}
