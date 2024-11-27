@@ -14,43 +14,6 @@ from qiskit_nature.second_q.algorithms import GroundStateEigensolver
 from specs import hamiltonian_methods, taper, freezecore, molecule 
 
 
-class AAVQE_on_Chemistry():
-    def __init__(self, molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement):
-        self.molecule= molecule
-        self.taper= taper
-        self.freezecore= freezecore
-        self.steps= steps
-        self.layers= layers
-        self.single_qubit_gates= single_qubit_gates
-        self.entanglement_gates= entanglement_gates
-        self.entanglement=entanglement
-        self.qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
-        self.number_of_qubits=self.qubitop.num_qubits
-    def run(self):
-        aavqe_instance=My_AAVQE(self.number_of_qubits,self.steps,self.layers,self.single_qubit_gates,self.entanglement_gates,self.entanglement,'transverse',self.qubitop)
-        return aavqe_instance.run()
-    def groundstateeigsolver(self):
-        solver= GroundStateEigensolver(JordanWignerMapper(),NumPyMinimumEigensolver())
-        
-        return solver.solve(self.elecprob)
-    def minimum_eigenvalue(self):
-        min_eigen = np.min(np.linalg.eig(self.qubitop)[0])
-        return min_eigen
-'''
-
-solver = GroundStateEigensolver(
-    JordanWignerMapper(),
-    NumPyMinimumEigensolver(),
-)
-
-result = solver.solve(qmolecule)
-print(result.computed_energies)
-print(result.nuclear_repulsion_energy)
-ref_value = result.computed_energies + result.nuclear_repulsion_energy
-print(ref_value)
-'''
-
-
 
 class My_AAVQE():
     def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian,initial_state=None):
@@ -85,6 +48,7 @@ class My_AAVQE():
        # self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
         self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
         self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers,initial_state= self.initial_state)
+        
         #this is already in the general parameter form. 
         self.number_of_parameters = len(self.initial_parameters)
 
@@ -145,7 +109,51 @@ class My_AAVQE():
 
             minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
             optimal_thetas = minimization_object.x
+            self.offset=0
 
+            inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
+            energies_aavqe.append(inst_exp_value)
+            energies_exact.append(self.minimum_eigenvalue(hamiltonian) - lamda*self.offset)
+            #print(f'and the hamiltonian right now is {hamiltonian} ')
+            
+            print(f'and the instantaneous expectation values is {inst_exp_value}') 
+            print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
+#Question now is how will we compute the true expectation value? Will we do it from the Hamiltonian that was created? 
+
+        plt.plot(energies_aavqe,label='aavqe energy')
+        plt.plot(energies_exact,label='true energy')
+        plt.legend()
+        plt.xlabel('time')
+        plt.ylabel('energy (Ha)')
+        plt.title(f'{self.string_initial_hamiltonian} and {self.string_final_hamiltonian}')
+        plt.show()
+        return energies_aavqe
+    def alternative_run(self):
+        
+        lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
+        
+    
+        optimal_thetas = self.initial_parameters.copy()
+        instantaneous_expectation_value=self.get_expectation_value(optimal_thetas,self.initial_hamiltonian)
+        initial_ground_state=self.minimum_eigenvalue(self.initial_hamiltonian)
+        energies_aavqe = [instantaneous_expectation_value]
+        energies_exact = [initial_ground_state]
+        #Do a pre-run of the initial angles. Fix the initial Hamiltonian and have it run VQE to get the correct angles to start with. 
+        minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
+        optimal_thetas = minimization_object.x
+        
+        print(f'We start with the optimal angles of the initial hamiltonian: {optimal_thetas}')
+
+
+        for lamda in lambdas:
+
+            print('\n')
+            print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
+            hamiltonian = self.get_instantaneous_hamiltonian(lamda)
+
+            minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
+            optimal_thetas = minimization_object.x
+            self.offset=0
 
             inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
             energies_aavqe.append(inst_exp_value)
@@ -252,3 +260,42 @@ class AAVQE():
             print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
 
         return energies_aavqe
+    
+
+
+# class AAVQE_on_Chemistry():
+#     def __init__(self, molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement):
+#         self.molecule= molecule
+#         self.taper= taper
+#         self.freezecore= freezecore
+#         self.steps= steps
+#         self.layers= layers
+#         self.single_qubit_gates= single_qubit_gates
+#         self.entanglement_gates= entanglement_gates
+#         self.entanglement=entanglement
+#         self.qubitop=Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+#         self.number_of_qubits=self.qubitop.num_qubits
+#     def run(self):
+#         aavqe_instance=My_AAVQE(self.number_of_qubits,self.steps,self.layers,self.single_qubit_gates,self.entanglement_gates,self.entanglement,'transverse',self.qubitop)
+#         return aavqe_instance.run()
+#     def groundstateeigsolver(self):
+#         solver= GroundStateEigensolver(JordanWignerMapper(),NumPyMinimumEigensolver())
+        
+#         return solver.solve(self.elecprob)
+#     def minimum_eigenvalue(self):
+#         min_eigen = np.min(np.linalg.eig(self.qubitop)[0])
+#         return min_eigen
+'''
+
+solver = GroundStateEigensolver(
+    JordanWignerMapper(),
+    NumPyMinimumEigensolver(),
+)
+
+result = solver.solve(qmolecule)
+print(result.computed_energies)
+print(result.nuclear_repulsion_energy)
+ref_value = result.computed_energies + result.nuclear_repulsion_energy
+print(ref_value)
+'''
+

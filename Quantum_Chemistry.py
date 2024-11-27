@@ -72,9 +72,9 @@ class Moleculeclass():
         binary_string= get_string_from_dict(binary_string)
         pauli_op= create_z_operator_from_binary_string(binary_string)
         return pauli_op
-        
-    
 
+      
+ 
 
     # def get_hartreefock_state(self,num_qubits):
     #     # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)

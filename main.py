@@ -42,7 +42,7 @@ entanglement = 'linear'
 
 
 
-aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
+#aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock()
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
