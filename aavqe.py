@@ -43,10 +43,17 @@ class My_AAVQE():
             self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule, taper, freezecore)
         # Now setting up the quantum circuit. 
         self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
-
+        if  self.initial_hamiltonian == 'paper':
+            None
+            #We need to do this!
+        else:
+            self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+            self.initial_parameters[8]=np.pi
+            self.initial_parameters[12]=np.pi
+        
        #
        # self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
-        self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+        
         self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers,initial_state= self.initial_state)
         
         #this is already in the general parameter form. 
@@ -56,6 +63,11 @@ class My_AAVQE():
     def draw_circuit(self):
         self.qcir.decompose().draw(output='mpl')
         plt.show()
+    def draw_latex(self):
+        latex_code= self.qcir.decompose().draw(output='latex')
+        return latex_code
+
+        
 
     def get_expectation_value(self, angles, observable):
         estimator = StatevectorEstimator()
@@ -104,12 +116,13 @@ class My_AAVQE():
         for lamda in lambdas:
 
             print('\n')
-            print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
+            #print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
             hamiltonian = self.get_instantaneous_hamiltonian(lamda)
 
             minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
             optimal_thetas = minimization_object.x
             self.offset=0
+            print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
 
             inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
             energies_aavqe.append(inst_exp_value)
@@ -139,8 +152,10 @@ class My_AAVQE():
         energies_aavqe = [instantaneous_expectation_value]
         energies_exact = [initial_ground_state]
         #Do a pre-run of the initial angles. Fix the initial Hamiltonian and have it run VQE to get the correct angles to start with. 
-        minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
-        optimal_thetas = minimization_object.x
+        # minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(self.initial_hamiltonian), method='SLSQP')
+        # optimal_thetas = minimization_object.x
+        #that didn't work. Input it manually. It outputs IIIZIIIZ, so it's |00010001>. 
+
         
         print(f'We start with the optimal angles of the initial hamiltonian: {optimal_thetas}')
 
