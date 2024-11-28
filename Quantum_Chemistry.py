@@ -1,4 +1,5 @@
 import numpy as np
+from itertools import product
 from qiskit_nature.second_q.drivers import PySCFDriver
 from qiskit_nature.second_q.mappers import JordanWignerMapper, ParityMapper
 from qiskit_nature.second_q.formats.molecule_info import MoleculeInfo
@@ -70,7 +71,6 @@ class Moleculeclass():
         state_vector= Statevector(hf_state)
         binary_string=state_vector.probabilities_dict()
         binary_string= get_string_from_dict(binary_string)
-        pauli_op= create_projector_from_binary_string(binary_string)
         return pauli_op
     def get_hartreefock_in_projector(self):
         # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
@@ -78,13 +78,10 @@ class Moleculeclass():
         # Get the Hartree-Fock state
         hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
         state_vector= Statevector(hf_state)
+        projector=state_vector.to_operator()
         binary_string=state_vector.probabilities_dict()
-        binary_string= get_string_from_dict(binary_string)
-        pauli_op= create_projector_from_binary_string(binary_string)
+        return Operator(np.eye(2**8)) - projector
         
-        return pauli_op
-
-        return projector
         #return identity_minus_projector  # This is the operator I - P
 
       

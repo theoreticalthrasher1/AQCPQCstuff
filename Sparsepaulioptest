@@ -1,0 +1,12 @@
+from qiskit.quantum_info import SparsePauliOp
+
+
+X_tuples = []
+number_of_qubits=6
+for i in range(number_of_qubits):
+    X_tuples.append(('X+Z', [i], -1))
+
+out= SparsePauliOp.from_sparse_list([*X_tuples], num_qubits=number_of_qubits)
+
+print([*X_tuples])
+print(out)

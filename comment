@@ -1,3 +1,3 @@
-Just to check that the projector is working correctly, and so that we are on track to getting the correct initial hamiltonian, 
-we've run this code to check which element the Hamiltonian is projecting onto. It turns out the only non-zero element of the matrix
-is the $(17,17)$th element, which is what we expect. The Hartree fock state is indeed $|00010001\rangle$.
+The code given below, does not work. I tried doing it from list, but that doesn't seem to be appropriate. I think what I'll do is I'll revert back to the projector method. 
+
+The thing is we would have to expand things otherwise. 
