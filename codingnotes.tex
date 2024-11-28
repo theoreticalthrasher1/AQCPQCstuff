@@ -1,0 +1,493 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your LaTeX on the left,
+% and we'll compile it for you on the right. If you open the
+% 'Share' menu, you can invite other users to edit at the same
+% time. See www.overleaf.com/learn for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}
+\usepackage{minted}
+\usepackage{xcolor} 
+\usepackage{tcolorbox}
+\definecolor{LightGray}{gray}{0.9}
+\begin{document}
+
+What I've done is I've constructed the following dictionary to allow the user to choose the initial and final hamiltonians. 
+
+Initial: A basic operator whose ground state is the HF state. 
+
+There is something that needs fixing.  $|001\rangle$ can be associated with $IIZ$, but $|011 \rangle$ cannot be associated with $IZZ$. You'd need a minus sign. 
+This is too crude an initial Hamiltonian, so a slightly wiser choice for the initial Hamiltonian could be the HF energy times this operator we've constructed. 
+
+So, this is wrong, and I'm about to fix it. We'll delve into how we defined the initial operator. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	hamiltonian_methods = {
+		'initial': {
+			'qiskit_hf': {
+				'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+			},
+			'qiskit_hf_and_energy': {
+				'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+			},
+			
+			'paper': {
+				'description': 'Use Hartree-Fock from a specific paper (custom implementation)',
+				'generate': lambda molecule, taper, freezecore:IBM_LiH_initial
+			}
+		},
+		'final': {
+			'qiskit': {
+				'description': 'Use final Hamiltonian from a paper-specific method',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+			},
+			'paper': {
+				'description': 'Use Qiskit for final Hamiltonian (if different from initial)',
+				'generate': lambda molecule, taper, freezecore: IBM_LiH
+			}
+		}
+	}
+\end{minted}
+
+
+This is how we converted into Pauli:
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	def get_hartreefock_in_pauli(self):
+		# Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+		problem= self.electronic_structure_problem
+		# Get the Hartree-Fock state
+		hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+		state_vector= Statevector(hf_state)
+		binary_string=state_vector.probabilities_dict()
+		binary_string= get_string_from_dict(binary_string)
+		pauli_op= create_z_operator_from_binary_string(binary_string)
+		return pauli_op
+\end{minted}
+
+Now, we've defined an operator whose eigenvalue is zero for the HF state, and one otherwise: 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	def get_hartreefock_in_projector(self):
+		# Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+		problem= self.electronic_structure_problem
+		# Get the Hartree-Fock state
+		hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+		
+		state_vector= Statevector(hf_state)
+		state_vector.to_operator()
+		# Identity operator (same size as the projector, which is typically 2^n for n qubits)
+		identity = Operator(np.eye(projector.num_qubits))
+		
+		# Identity minus projector
+		identity_minus_projector = identity - projector
+		
+		return identity_minus_projector  # This is the operator I - P
+\end{minted}
+
+We've modified the dictionary:
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	hamiltonian_methods = {
+		'initial': {
+			'qiskit_hf': {
+				'description': 'This is a simple Hartree-Fock Hamiltonian.',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
+			},
+			'qiskit_hf_and_energy': {
+				'description': 'This is a simple Hartree-Fock Hamiltonian, multiplied by the Hartree-fock energy.',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
+			},
+			
+			'paper': {
+				'description': 'Use Hartree-Fock from a specific paper (custom implementation)',
+				'generate': lambda molecule, taper, freezecore:IBM_LiH_initial
+			}
+		},
+		'final': {
+			'qiskit': {
+				'description': 'Use final Hamiltonian from a paper-specific method',
+				'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+			},
+			'paper': {
+				'description': 'Use Qiskit for final Hamiltonian (if different from initial)',
+				'generate': lambda molecule, taper, freezecore: IBM_LiH
+			}
+		}
+	}
+\end{minted}
+
+I'm feeling this is a bit dubious- the Operator doesn't seem defined. So, I'm going to test it. The best way to test it is to ask the alternative run method to output the initial hamiltonian. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	def get_hartreefock_in_projector(self):
+		# Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+		problem= self.electronic_structure_problem
+		# Get the Hartree-Fock state
+		hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+		state_vector= Statevector(hf_state)
+		state_vector.to_operator()
+		# Identity operator (same size as the projector, which is typically 2^n for n qubits)
+		identity = Operator(np.eye(projector.num_qubits))
+		# Identity minus projector
+		identity_minus_projector = identity - projector
+		return identity_minus_projector  # This is the operator I - P
+\end{minted}
+Now, I've fixed a few major bugs with the code. I've simplified the projector. I will use sparse pauli to come up with I-projector. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos
+	]
+	{python}
+	def get_hartreefock_in_projector(self):
+	# Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+	problem= self.electronic_structure_problem
+	# Get the Hartree-Fock state
+	hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+	state_vector= Statevector(hf_state)
+	projector=state_vector.to_operator()
+	
+	return projector
+\end{minted}
+
+We start with running the code, and that is the alternative\_run bit. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos,highlightlines={ 24 }
+	]
+	{python}
+	from aqc_pqc import AQC_PQC
+	from hamiltonian import Hamiltonian 
+	from quantum_circuit import QCir
+	import networkx as nx
+	import numpy as np
+	from brute_force import Brute_Force
+	from qaoa_circuit import QAOA_Circuit
+	from aqc_qaoa import AQC_PQC_QAOA
+	from Quantum_Chemistry import Moleculeclass,Solvebynumpy
+	from aavqe import *
+	from qiskit_algorithms.utils import algorithm_globals
+	from qiskit_aer import Aer
+	backend = Aer.get_backend('statevector_simulator')
+	seed = 3
+	number_of_qubits = 8
+	steps = 10#Choose number of steps to interpolate from initial to final Hamiltonian
+	connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware-Efficient ansatz
+	single_qubit_gates = 'ry'
+	entanglement_gates = 'cz'
+	layers = 1
+	entanglement = 'linear'
+	hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock()
+	myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit')
+	myaavqe.alternative_run()
+\end{minted}
+
+Here we've initialised My AAVQE. 
+
+Line 6 pulls the appropriate operator given the definition. This needs to be checked- that the initial operator is defined correctly. 
+It is used later in the method on line 31, and I got an error on line 34. The method on line 31 takes angles and observables as arguments, each of which gets fed through the alternative\_run method on line 39. Specifically, on line 42. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos,highlightlines={ 6,31,34 }
+	]
+	{python}
+	def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian,initial_state=None):
+	self.number_of_qubits = number_of_qubits 
+	self.initial_state=initial_state   
+	self.steps = steps
+	self.string_initial_hamiltonian=initial_hamiltonian
+	self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore)
+	self.string_final_hamiltonian=target_hamiltonian
+	self.offset=0
+	self.layers = layers
+	self.single_qubit_gates = single_qubit_gates
+	self.entanglement_gates = entanglement_gates
+	self.entanglement = entanglement
+	if self.string_initial_hamiltonian == 'transverse':
+	X_tuples = []
+	for i in range(number_of_qubits):
+	X_tuples.append(('X', [i], -1))
+	self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
+	elif  self.string_initial_hamiltonian == 'paper':
+	self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+	self.initial_parameters[6]=np.pi
+	self.initial_parameters[7]=np.pi
+	else:
+	self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+	self.initial_parameters[8]=np.pi
+	self.initial_parameters[12]=np.pi
+	self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
+	print(self.initial_hamiltonian)
+	self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers,initial_state= self.initial_state)
+	self.number_of_parameters = len(self.initial_parameters)
+	
+	def get_expectation_value(self, angles, observable):
+	estimator = StatevectorEstimator()
+	pub = (self.qcir, observable, angles)
+	job = estimator.run([pub])
+	result = job.result()[0]
+	expectation_value = result.data.evs
+	return np.real(expectation_value)
+	
+	def alternative_run(self):
+	lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
+	optimal_thetas = self.initial_parameters.copy()
+	instantaneous_expectation_value=self.get_expectation_value(optimal_thetas,self.initial_hamiltonian)
+	initial_ground_state=self.minimum_eigenvalue(self.initial_hamiltonian)
+	energies_aavqe = [instantaneous_expectation_value]
+	energies_exact = [initial_ground_state]
+	print(f'We start with the optimal angles of the initial hamiltonian: {optimal_thetas}')
+	for lamda in lambdas:
+	print('\n')
+	hamiltonian = self.get_instantaneous_hamiltonian(lamda)
+	minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
+	optimal_thetas = minimization_object.x
+	print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
+	self.offset=0
+	inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
+	energies_aavqe.append(inst_exp_value)
+	energies_exact.append(self.minimum_eigenvalue(hamiltonian) - lamda*self.offset)
+	print(f'and the instantaneous expectation values is {inst_exp_value}') 
+	print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
+	plt.plot(energies_aavqe,label='aavqe energy')
+	plt.plot(energies_exact,label='true energy')
+	plt.legend()
+	plt.xlabel('time')
+	plt.ylabel('energy (Ha)')
+	plt.title(f'{self.string_initial_hamiltonian} and {self.string_final_hamiltonian}')
+	plt.show()
+	return energies_aavqe
+\end{minted}
+
+
+We start with running the code, and that is the alternative\_run bit. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos,highlightlines={ 24 }
+	]
+	{python}
+	from aqc_pqc import AQC_PQC
+	from hamiltonian import Hamiltonian 
+	from quantum_circuit import QCir
+	import networkx as nx
+	import numpy as np
+	from brute_force import Brute_Force
+	from qaoa_circuit import QAOA_Circuit
+	from aqc_qaoa import AQC_PQC_QAOA
+	from Quantum_Chemistry import Moleculeclass,Solvebynumpy
+	from aavqe import *
+	from qiskit_algorithms.utils import algorithm_globals
+	from qiskit_aer import Aer
+	backend = Aer.get_backend('statevector_simulator')
+	seed = 3
+	number_of_qubits = 8
+	steps = 10#Choose number of steps to interpolate from initial to final Hamiltonian
+	connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware-Efficient ansatz
+	single_qubit_gates = 'ry'
+	entanglement_gates = 'cz'
+	layers = 1
+	entanglement = 'linear'
+	hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock()
+	myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit')
+	myaavqe.alternative_run()
+\end{minted}
+
+Here we've initialised My AAVQE. 
+
+Line 6 pulls the appropriate operator given the definition. This needs to be checked- that the initial operator is defined correctly. 
+It is used later in the method on line 31, and I got an error on line 34. The method on line 31 takes angles and observables as arguments, each of which gets fed through the alternative\_run method on line 39. Specifically, on line 42. 
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos,highlightlines={ 6,31,34 }
+	]
+	{python}
+	def __init__(self, number_of_qubits, steps, layers, single_qubit_gates, entanglement_gates, entanglement,initial_hamiltonian,target_hamiltonian,initial_state=None):
+	self.number_of_qubits = number_of_qubits 
+	self.initial_state=initial_state   
+	self.steps = steps
+	self.string_initial_hamiltonian=initial_hamiltonian
+	self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore)
+	self.string_final_hamiltonian=target_hamiltonian
+	self.offset=0
+	self.layers = layers
+	self.single_qubit_gates = single_qubit_gates
+	self.entanglement_gates = entanglement_gates
+	self.entanglement = entanglement
+	if self.string_initial_hamiltonian == 'transverse':
+	X_tuples = []
+	for i in range(number_of_qubits):
+	X_tuples.append(('X', [i], -1))
+	self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
+	elif  self.string_initial_hamiltonian == 'paper':
+	self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+	self.initial_parameters[6]=np.pi
+	self.initial_parameters[7]=np.pi
+	else:
+	self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+	self.initial_parameters[8]=np.pi
+	self.initial_parameters[12]=np.pi
+	self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
+	print(self.initial_hamiltonian)
+	self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers,initial_state= self.initial_state)
+	self.number_of_parameters = len(self.initial_parameters)
+	
+	def get_expectation_value(self, angles, observable):
+	estimator = StatevectorEstimator()
+	pub = (self.qcir, observable, angles)
+	job = estimator.run([pub])
+	result = job.result()[0]
+	expectation_value = result.data.evs
+	return np.real(expectation_value)
+	
+	def alternative_run(self):
+	lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
+	optimal_thetas = self.initial_parameters.copy()
+	instantaneous_expectation_value=self.get_expectation_value(optimal_thetas,self.initial_hamiltonian)
+	initial_ground_state=self.minimum_eigenvalue(self.initial_hamiltonian)
+	energies_aavqe = [instantaneous_expectation_value]
+	energies_exact = [initial_ground_state]
+	print(f'We start with the optimal angles of the initial hamiltonian: {optimal_thetas}')
+	for lamda in lambdas:
+	print('\n')
+	hamiltonian = self.get_instantaneous_hamiltonian(lamda)
+	minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
+	optimal_thetas = minimization_object.x
+	print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
+	self.offset=0
+	inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
+	energies_aavqe.append(inst_exp_value)
+	energies_exact.append(self.minimum_eigenvalue(hamiltonian) - lamda*self.offset)
+	print(f'and the instantaneous expectation values is {inst_exp_value}') 
+	print(f'and the true expectation value is {self.minimum_eigenvalue(hamiltonian) - lamda*self.offset}')
+	plt.plot(energies_aavqe,label='aavqe energy')
+	plt.plot(energies_exact,label='true energy')
+	plt.legend()
+	plt.xlabel('time')
+	plt.ylabel('energy (Ha)')
+	plt.title(f'{self.string_initial_hamiltonian} and {self.string_final_hamiltonian}')
+	plt.show()
+	return energies_aavqe
+\end{minted}
+
+Just to check that the projector is working correctly, and so that we are on track to getting the correct initial hamiltonian, 
+we've run this code to check which element the Hamiltonian is projecting onto. It turns out the only non-zero element of the matrix
+is the $(17,17)$th element, which is what we expect. The Hartree fock state is indeed $|00010001\rangle$.
+
+
+\begin{minted}
+	[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	fontsize=\tiny,
+	linenos,highlightlines={ 6,31,34 }
+	]
+	{python}
+	myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit',hfstate)
+	print(myaavqe.initial_hamiltonian)
+	H=myaavqe.initial_hamiltonian
+	# Assuming `H` is your operator
+	matrix = H.to_matrix()
+	# Find non-zero elements in the matrix
+	non_zero_indices = np.nonzero(matrix)  # Indices of non-zero elements
+	non_zero_values = matrix[non_zero_indices]  # Non-zero values
+	print(hfstate)
+	# Print the non-zero elements and their positions
+	print("Non-zero elements:")
+	for idx, value in zip(zip(*non_zero_indices), non_zero_values):
+	print(f"Index: {idx}, Value: {value}")
+	
+	# Assuming `H` is your operator and has been converted to a matrix form
+	matrix = H.to_matrix()
+	
+	# Compute eigenvalues and eigenvectors using numpy.linalg.eig
+	eigenvalues, eigenvectors = np.linalg.eig(matrix)
+	
+	# Find the index of the minimum eigenvalue
+	min_index = np.argmin(eigenvalues)
+	
+	# Get the corresponding minimum eigenvector
+	min_eigenvector = eigenvectors[:, min_index]
+	
+	# Normalize the eigenvector (optional but recommended)
+	min_eigenvector = min_eigenvector / np.linalg.norm(min_eigenvector)
+	
+	# Print the minimum eigenvalue and corresponding eigenvector
+	print(f"Minimum eigenvalue: {eigenvalues[min_index]}")
+	print(f"Minimum eigenvector: {min_eigenvector}")
+	#myaavqe.initial_hamiltonian()
+	#myaavqe.alternative_run()
+	#print(myaavqe.draw_latex())
+\end{minted}
+
+
+
+\end{document}

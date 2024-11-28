@@ -30,7 +30,7 @@ def get_string_from_dict(pauli_dict: dict) -> str:
 #             pauli_string[index] = 'Z'  # Place 'Z' where needed
 
 #     return SparsePauliOp([''.join(pauli_string)], [1])  
-def create_z_operator_from_binary_string(binary_string: str) -> SparsePauliOp:
+def create_projector_from_binary_string(binary_string: str) -> SparsePauliOp:
     """Creates a SparsePauliOp with Z gates based on a binary string.
 
     Args:
@@ -39,11 +39,27 @@ def create_z_operator_from_binary_string(binary_string: str) -> SparsePauliOp:
     Returns:
         A SparsePauliOp representing the Z gate operations.
     """
-    num_qubits = len(binary_string)
-    pauli_string = ['I'] * num_qubits  # Initialize with identities
+    
+    # List to store Pauli operator terms
+    pauli_ops = []
+    coeffs = []
+    
+    for bit in binary_string:
+        if bit == '0':
+            # For 0, use (1/2)*(I + Z)
+            pauli_ops.append('I')
+            coeffs.append(0.5)
+            pauli_ops.append('Z')
+            coeffs.append(0.5)
+        elif bit == '1':
+            # For 1, use (1/2)*(I - Z)
+            pauli_ops.append('I')
+            coeffs.append(0.5)
+            pauli_ops.append('Z')
+            coeffs.append(-0.5)
+    
+    # Convert the list of operators and coefficients to a SparsePauliOp
+    return ['I']*len(binary_string)- SparsePauliOp(pauli_ops, coeffs)
 
-    for index, bit in enumerate(binary_string):
-        if bit == '1':
-            pauli_string[index] = 'Z'  # Place 'Z' where needed
-
-    return SparsePauliOp([''.join(pauli_string)], [1])
+test=create_projector_from_binary_string('0')
+print(test)

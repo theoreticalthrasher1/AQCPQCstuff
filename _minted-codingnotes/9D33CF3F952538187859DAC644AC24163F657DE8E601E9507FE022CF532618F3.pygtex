@@ -1,0 +1,35 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{My\PYGZus{}AAVQE}\PYG{p}{():}
+    \PYG{k}{def} \PYG{n+nf}{alternative\PYGZus{}run}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{):}
+        \PYG{n}{lambdas} \PYG{o}{=} \PYG{p}{[}\PYG{n}{i} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{steps}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{)][}\PYG{l+m+mi}{1}\PYG{p}{:]}
+        \PYG{n}{optimal\PYGZus{}thetas} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{initial\PYGZus{}parameters}\PYG{o}{.}\PYG{n}{copy}\PYG{p}{()}
+        \PYG{n}{instantaneous\PYGZus{}expectation\PYGZus{}value}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{get\PYGZus{}expectation\PYGZus{}value}\PYG{p}{(}\PYG{n}{optimal\PYGZus{}thetas}\PYG{p}{,}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{initial\PYGZus{}hamiltonian}\PYG{p}{)}
+        \PYG{n}{initial\PYGZus{}ground\PYGZus{}state}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{minimum\PYGZus{}eigenvalue}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{initial\PYGZus{}hamiltonian}\PYG{p}{)}
+        \PYG{n}{energies\PYGZus{}aavqe} \PYG{o}{=} \PYG{p}{[}\PYG{n}{instantaneous\PYGZus{}expectation\PYGZus{}value}\PYG{p}{]}
+        \PYG{n}{energies\PYGZus{}exact} \PYG{o}{=} \PYG{p}{[}\PYG{n}{initial\PYGZus{}ground\PYGZus{}state}\PYG{p}{]}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}We start with the optimal angles of the initial hamiltonian: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{optimal\PYGZus{}thetas}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+        \PYG{k}{for} \PYG{n}{lamda} \PYG{o+ow}{in} \PYG{n}{lambdas}\PYG{p}{:}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}We are working on }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{lamda}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ where the current optimal point is }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{optimal\PYGZus{}thetas}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{hamiltonian} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{get\PYGZus{}instantaneous\PYGZus{}hamiltonian}\PYG{p}{(}\PYG{n}{lamda}\PYG{p}{)}
+            \PYG{n}{minimization\PYGZus{}object} \PYG{o}{=} \PYG{n}{optimize}\PYG{o}{.}\PYG{n}{minimize}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{get\PYGZus{}expectation\PYGZus{}value}\PYG{p}{,} \PYG{n}{x0}\PYG{o}{=}\PYG{n}{optimal\PYGZus{}thetas}\PYG{p}{,} \PYG{n}{args}\PYG{o}{=}\PYG{p}{(}\PYG{n}{hamiltonian}\PYG{p}{),} \PYG{n}{method}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}SLSQP\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{optimal\PYGZus{}thetas} \PYG{o}{=} \PYG{n}{minimization\PYGZus{}object}\PYG{o}{.}\PYG{n}{x}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{0}
+            \PYG{n}{inst\PYGZus{}exp\PYGZus{}value} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{get\PYGZus{}expectation\PYGZus{}value}\PYG{p}{(}\PYG{n}{optimal\PYGZus{}thetas}\PYG{p}{,} \PYG{n}{hamiltonian}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{lamda}\PYG{o}{*}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{offset}
+            \PYG{n}{energies\PYGZus{}aavqe}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{inst\PYGZus{}exp\PYGZus{}value}\PYG{p}{)}
+            \PYG{n}{energies\PYGZus{}exact}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{minimum\PYGZus{}eigenvalue}\PYG{p}{(}\PYG{n}{hamiltonian}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{lamda}\PYG{o}{*}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{)}
+            \PYG{c+c1}{\PYGZsh{}print(f\PYGZsq{}and the hamiltonian right now is \PYGZob{}hamiltonian\PYGZcb{} \PYGZsq{})}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}and the instantaneous expectation values is }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{inst\PYGZus{}exp\PYGZus{}value}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+            \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}and the true expectation value is }\PYG{l+s+si}{\PYGZob{}}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{minimum\PYGZus{}eigenvalue}\PYG{p}{(}\PYG{n}{hamiltonian}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{lamda}\PYG{o}{*}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{offset}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{}Question now is how will we compute the true expectation value? Will we do it from the Hamiltonian that was created?}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{energies\PYGZus{}aavqe}\PYG{p}{,}\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}aavqe energy\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{energies\PYGZus{}exact}\PYG{p}{,}\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}true energy\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}time\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}energy (Ha)\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+si}{\PYGZob{}}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{string\PYGZus{}initial\PYGZus{}hamiltonian}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{ and }\PYG{l+s+si}{\PYGZob{}}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{string\PYGZus{}final\PYGZus{}hamiltonian}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+        \PYG{k}{return} \PYG{n}{energies\PYGZus{}aavqe}
+
+
+\end{Verbatim}

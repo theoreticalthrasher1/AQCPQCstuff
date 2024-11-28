@@ -1,0 +1,29 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	\PYG{n}{hamiltonian\PYGZus{}methods} \PYG{o}{=} \PYG{p}{\PYGZob{}}
+		\PYG{l+s+s1}{\PYGZsq{}initial\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+			\PYG{l+s+s1}{\PYGZsq{}qiskit\PYGZus{}hf\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+				\PYG{l+s+s1}{\PYGZsq{}description\PYGZsq{}}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}Use Qiskit Hartree\PYGZhy{}Fock method to generate Initial Hamiltonian\PYGZsq{}}\PYG{p}{,}
+				\PYG{l+s+s1}{\PYGZsq{}generate\PYGZsq{}}\PYG{p}{:} \PYG{k}{lambda} \PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{:} \PYG{n}{Moleculeclass}\PYG{p}{(}\PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{)}\PYG{o}{.}\PYG{n}{get\PYGZus{}hartreefock\PYGZus{}in\PYGZus{}pauli}\PYG{p}{()}
+			\PYG{p}{\PYGZcb{},}
+			\PYG{l+s+s1}{\PYGZsq{}qiskit\PYGZus{}hf\PYGZus{}and\PYGZus{}energy\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+				\PYG{l+s+s1}{\PYGZsq{}description\PYGZsq{}}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}Use Qiskit Hartree\PYGZhy{}Fock method to generate Initial Hamiltonian\PYGZsq{}}\PYG{p}{,}
+				\PYG{l+s+s1}{\PYGZsq{}generate\PYGZsq{}}\PYG{p}{:} \PYG{k}{lambda} \PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{:} \PYG{n}{Moleculeclass}\PYG{p}{(}\PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{)}\PYG{o}{.}\PYG{n}{get\PYGZus{}hartreefock\PYGZus{}energy}\PYG{p}{()}\PYG{o}{*} \PYG{n}{Moleculeclass}\PYG{p}{(}\PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{)}\PYG{o}{.}\PYG{n}{get\PYGZus{}hartreefock\PYGZus{}in\PYGZus{}pauli}\PYG{p}{()}
+			\PYG{p}{\PYGZcb{},}
+			
+			\PYG{l+s+s1}{\PYGZsq{}paper\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+				\PYG{l+s+s1}{\PYGZsq{}description\PYGZsq{}}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}Use Hartree\PYGZhy{}Fock from a specific paper (custom implementation)\PYGZsq{}}\PYG{p}{,}
+				\PYG{l+s+s1}{\PYGZsq{}generate\PYGZsq{}}\PYG{p}{:} \PYG{k}{lambda} \PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{:}\PYG{n}{IBM\PYGZus{}LiH\PYGZus{}initial}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{},}
+		\PYG{l+s+s1}{\PYGZsq{}final\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+			\PYG{l+s+s1}{\PYGZsq{}qiskit\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+				\PYG{l+s+s1}{\PYGZsq{}description\PYGZsq{}}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}Use final Hamiltonian from a paper\PYGZhy{}specific method\PYGZsq{}}\PYG{p}{,}
+				\PYG{l+s+s1}{\PYGZsq{}generate\PYGZsq{}}\PYG{p}{:} \PYG{k}{lambda} \PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{:} \PYG{n}{Moleculeclass}\PYG{p}{(}\PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,}\PYG{n}{freezecore}\PYG{p}{)}\PYG{o}{.}\PYG{n}{get\PYGZus{}qubit\PYGZus{}operator}\PYG{p}{()}
+			\PYG{p}{\PYGZcb{},}
+			\PYG{l+s+s1}{\PYGZsq{}paper\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+				\PYG{l+s+s1}{\PYGZsq{}description\PYGZsq{}}\PYG{p}{:} \PYG{l+s+s1}{\PYGZsq{}Use Qiskit for final Hamiltonian (if different from initial)\PYGZsq{}}\PYG{p}{,}
+				\PYG{l+s+s1}{\PYGZsq{}generate\PYGZsq{}}\PYG{p}{:} \PYG{k}{lambda} \PYG{n}{molecule}\PYG{p}{,} \PYG{n}{taper}\PYG{p}{,} \PYG{n}{freezecore}\PYG{p}{:} \PYG{n}{IBM\PYGZus{}LiH}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

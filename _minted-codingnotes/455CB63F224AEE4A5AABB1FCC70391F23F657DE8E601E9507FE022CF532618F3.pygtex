@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	\PYG{k}{def} \PYG{n+nf}{get\PYGZus{}hartreefock\PYGZus{}in\PYGZus{}pauli}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{):}
+	\PYG{c+c1}{\PYGZsh{} Get the number of spatial orbitals (i.e., the number of qubits in the mapping)}
+	\PYG{n}{problem}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{electronic\PYGZus{}structure\PYGZus{}problem}
+	\PYG{c+c1}{\PYGZsh{} Get the Hartree\PYGZhy{}Fock state}
+	\PYG{n}{hf\PYGZus{}state} \PYG{o}{=} \PYG{n}{HartreeFock}\PYG{p}{(}\PYG{n}{problem}\PYG{o}{.}\PYG{n}{num\PYGZus{}spatial\PYGZus{}orbitals}\PYG{p}{,}\PYG{n}{problem}\PYG{o}{.}\PYG{n}{num\PYGZus{}particles}\PYG{p}{,}\PYG{n}{JordanWignerMapper}\PYG{p}{())}
+	
+	\PYG{n}{state\PYGZus{}vector}\PYG{o}{=} \PYG{n}{Statevector}\PYG{p}{(}\PYG{n}{hf\PYGZus{}state}\PYG{p}{)}
+	\PYG{n}{binary\PYGZus{}string}\PYG{o}{=}\PYG{n}{state\PYGZus{}vector}\PYG{o}{.}\PYG{n}{probabilities\PYGZus{}dict}\PYG{p}{()}
+	\PYG{n}{binary\PYGZus{}string}\PYG{o}{=} \PYG{n}{get\PYGZus{}string\PYGZus{}from\PYGZus{}dict}\PYG{p}{(}\PYG{n}{binary\PYGZus{}string}\PYG{p}{)}
+	\PYG{n}{pauli\PYGZus{}op}\PYG{o}{=} \PYG{n}{create\PYGZus{}z\PYGZus{}operator\PYGZus{}from\PYGZus{}binary\PYGZus{}string}\PYG{p}{(}\PYG{n}{binary\PYGZus{}string}\PYG{p}{)}
+	\PYG{k}{return} \PYG{n}{pauli\PYGZus{}op}
+\end{Verbatim}

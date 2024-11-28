@@ -21,9 +21,8 @@ class My_AAVQE():
         self.initial_state=initial_state   
         self.steps = steps
         self.string_initial_hamiltonian=initial_hamiltonian
+        self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore)
         self.string_final_hamiltonian=target_hamiltonian
-        self.initial_hamiltonian = initial_hamiltonian
-        self.target_hamiltonian=target_hamiltonian
         self.offset=0
         self.layers = layers
         self.single_qubit_gates = single_qubit_gates
@@ -31,25 +30,22 @@ class My_AAVQE():
         self.entanglement = entanglement
         
         # Dealing with the initial hamiltonian
-        if initial_hamiltonian == 'transverse':
+        if self.string_initial_hamiltonian == 'transverse':
             X_tuples = []
 
             for i in range(number_of_qubits):
                 X_tuples.append(('X', [i], -1))
 
             self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
-        else:
-
-            self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule, taper, freezecore)
-        # Now setting up the quantum circuit. 
-        self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
-        if  self.initial_hamiltonian == 'paper':
-            None
-            #We need to do this!
+        elif  self.string_initial_hamiltonian == 'paper':
+            self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+            self.initial_parameters[6]=np.pi
+            self.initial_parameters[7]=np.pi
         else:
             self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
             self.initial_parameters[8]=np.pi
             self.initial_parameters[12]=np.pi
+        self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
         
        #
        # self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()
@@ -58,17 +54,12 @@ class My_AAVQE():
         
         #this is already in the general parameter form. 
         self.number_of_parameters = len(self.initial_parameters)
-
-
     def draw_circuit(self):
         self.qcir.decompose().draw(output='mpl')
         plt.show()
     def draw_latex(self):
         latex_code= self.qcir.decompose().draw(output='latex')
         return latex_code
-
-        
-
     def get_expectation_value(self, angles, observable):
         estimator = StatevectorEstimator()
         pub = (self.qcir, observable, angles)
@@ -78,8 +69,6 @@ class My_AAVQE():
         expectation_value = result.data.evs
 
         return np.real(expectation_value)
-    
-    
     def get_derivatives(self, angles, observable, shots=None): 
         estimator = Estimator() if not shots else Estimator(options={'shots':shots})
    
@@ -88,17 +77,12 @@ class My_AAVQE():
         return derivatives
     def get_instantaneous_hamiltonian(self, time):
         return (1-time)*self.initial_hamiltonian + time*self.target_hamiltonian
-
-
-
-
     def minimum_eigenvalue(self, matrix):
 
         min_eigen = np.min(np.linalg.eig(matrix)[0])
        
         #print(min_eigen)
         return min_eigen
-
     def run(self):
         
         lambdas = [i for i in np.linspace(0, 1, self.steps+1)][1:]
@@ -120,6 +104,9 @@ class My_AAVQE():
             hamiltonian = self.get_instantaneous_hamiltonian(lamda)
 
             minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
+
+            
+            print(f'Updated optimal angles: {optimal_thetas}')
             optimal_thetas = minimization_object.x
             self.offset=0
             print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
@@ -163,11 +150,12 @@ class My_AAVQE():
         for lamda in lambdas:
 
             print('\n')
-            print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
             hamiltonian = self.get_instantaneous_hamiltonian(lamda)
 
             minimization_object = optimize.minimize(self.get_expectation_value, x0=optimal_thetas, args=(hamiltonian), method='SLSQP')
             optimal_thetas = minimization_object.x
+            print(f'We are working on {lamda} where the current optimal point is {optimal_thetas}')
+
             self.offset=0
 
             inst_exp_value = self.get_expectation_value(optimal_thetas, hamiltonian) - lamda*self.offset
@@ -301,16 +289,14 @@ class AAVQE():
 #         min_eigen = np.min(np.linalg.eig(self.qubitop)[0])
 #         return min_eigen
 '''
-
 solver = GroundStateEigensolver(
     JordanWignerMapper(),
     NumPyMinimumEigensolver(),
 )
-
 result = solver.solve(qmolecule)
 print(result.computed_energies)
 print(result.nuclear_repulsion_energy)
 ref_value = result.computed_energies + result.nuclear_repulsion_energy
 print(ref_value)
 '''
-
+###########

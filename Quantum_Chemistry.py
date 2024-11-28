@@ -6,11 +6,11 @@ from qiskit_nature.second_q.transformers import FreezeCoreTransformer
 from qiskit_algorithms import NumPyMinimumEigensolver
 from qiskit_nature.second_q.algorithms import GroundStateEigensolver
 from qiskit_nature.second_q.circuit.library import HartreeFock
-from qiskit.quantum_info import SparsePauliOp
+from qiskit.quantum_info import SparsePauliOp, Operator
 from Auxiliary_functions import *
 from qiskit.quantum_info import Statevector
 from qiskit.primitives import Estimator
-
+from qiskit.quantum_info.operators import SparsePauliOp
 molecule = MoleculeInfo(
         #Coordinates in Angstrom
         symbols=["Li", "H"],
@@ -70,8 +70,22 @@ class Moleculeclass():
         state_vector= Statevector(hf_state)
         binary_string=state_vector.probabilities_dict()
         binary_string= get_string_from_dict(binary_string)
-        pauli_op= create_z_operator_from_binary_string(binary_string)
+        pauli_op= create_projector_from_binary_string(binary_string)
         return pauli_op
+    def get_hartreefock_in_projector(self):
+        # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+        problem= self.electronic_structure_problem
+        # Get the Hartree-Fock state
+        hf_state = HartreeFock(problem.num_spatial_orbitals,problem.num_particles,JordanWignerMapper())
+        state_vector= Statevector(hf_state)
+        binary_string=state_vector.probabilities_dict()
+        binary_string= get_string_from_dict(binary_string)
+        pauli_op= create_projector_from_binary_string(binary_string)
+        
+        return pauli_op
+
+        return projector
+        #return identity_minus_projector  # This is the operator I - P
 
       
  

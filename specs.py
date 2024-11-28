@@ -8,12 +8,12 @@ distance=1.57
 hamiltonian_methods = {
     'initial': {
         'qiskit_hf': {
-            'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+            'description': 'This is a simple Hartree-Fock Hamiltonian.',
+            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
         },
         'qiskit_hf_and_energy': {
-            'description': 'Use Qiskit Hartree-Fock method to generate Initial Hamiltonian',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+            'description': 'This is a simple Hartree-Fock Hamiltonian, multiplied by the Hartree-fock energy.',
+            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
         },
 
         'paper': {
