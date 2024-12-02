@@ -9,11 +9,11 @@ hamiltonian_methods = {
     'initial': {
         'qiskit_hf': {
             'description': 'This is a simple Hartree-Fock Hamiltonian.',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
+            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
         'qiskit_hf_and_energy': {
             'description': 'This is a simple Hartree-Fock Hamiltonian, multiplied by the Hartree-fock energy.',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_projector()
+            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
 
         'paper': {

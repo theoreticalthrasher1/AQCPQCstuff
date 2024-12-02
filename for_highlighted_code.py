@@ -1,65 +1,28 @@
-from qiskit.quantum_info import SparsePauliOp
-
-def get_string_from_dict(pauli_dict: dict) -> str:
-    """Extracts the Pauli string from a dictionary.
-
-    Args:
-        pauli_dict: A dictionary containing a single key (Pauli string).
-
-    Returns:
-        The Pauli string as a standard Python string.
-    """
-    pauli_str_np = list(pauli_dict.keys())[0]  # Get the key (NumPy string)
-    pauli_str = str(pauli_str_np)            # Convert to standard Python string
-    return pauli_str
-
-# def create_z_operator_from_binary(binary_list: list) -> SparsePauliOp:
-#     """Creates a SparsePauliOp with Z gates based on a binary list.
-
-#     Args:
-#         binary_list: A list of 0s and 1s indicating qubit targets for Z gates.
-
-#     Returns:
-#         A SparsePauliOp representing the Z gate operations.
-#     """
-#     num_qubits = len(binary_list)
-#     pauli_string = ['I'] * num_qubits  # Initialize with identities
-
-#     for index, value in enumerate(binary_list):
-#         if value == 1:
-#             pauli_string[index] = 'Z'  # Place 'Z' where needed
-
-#     return SparsePauliOp([''.join(pauli_string)], [1])  
-def create_projector_from_binary_string(binary_string: str) -> SparsePauliOp:
-    """Creates a SparsePauliOp with Z gates based on a binary string.
-
-    Args:
-        binary_string: A string of 0s and 1s indicating qubit targets for Z gates.
-
-    Returns:
-        A SparsePauliOp representing the Z gate operations.
-    """
-    
-    # List to store Pauli operator terms
-    pauli_ops = []
-    coeffs = []
-    
-    for bit in binary_string:
-        if bit == '0':
-            # For 0, use (1/2)*(I + Z)
-            pauli_ops.append('I')
-            coeffs.append(0.5)
-            pauli_ops.append('Z')
-            coeffs.append(0.5)
-        elif bit == '1':
-            # For 1, use (1/2)*(I - Z)
-            pauli_ops.append('I')
-            coeffs.append(0.5)
-            pauli_ops.append('Z')
-            coeffs.append(-0.5)
-    
-    # Convert the list of operators and coefficients to a SparsePauliOp
-    return ['I']*len(binary_string)- SparsePauliOp(pauli_ops, coeffs)
-
-test=create_projector_from_binary_string('0')
-print(test)
+def get_hartreefock_in_pauli(self):
+        # Get the number of spatial orbitals (i.e., the number of qubits in the mapping)
+        problem = self.electronic_structure_problem
+        # Get the Hartree-Fock state
+        hf_state = HartreeFock(problem.num_spatial_orbitals, problem.num_particles, JordanWignerMapper())
+        
+        # Create the statevector for the Hartree-Fock state
+        state_vector = Statevector(hf_state)
+        
+        # Get the probabilities dictionary for the state
+        binary_string = state_vector.probabilities_dict()
+        
+        # Initialize an empty list to store the Pauli operator terms
+        Z_tuples = []
+        
+        # Loop over each binary string in the probabilities dictionary
+        for bin_str, _ in binary_string.items():
+            # Loop over each bit in the binary string
+            for i, bit in enumerate(bin_str):
+                if bit == '0':
+                    Z_tuples.append(('Z', [i], -1))  # Append Z for bit 0
+                elif bit == '1':
+                    Z_tuples.append(('Z', [i], 1))  # Append Z for bit 1
+        
+        # Convert the list of Pauli operators and coefficients into a SparsePauliOp
+        hamiltonian = SparsePauliOp.from_sparse_list([*Z_tuples], num_qubits =  len(Z_tuples))
+        # print(f'the binary string is {binary_string}')
+        return hamiltonian

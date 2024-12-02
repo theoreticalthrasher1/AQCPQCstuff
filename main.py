@@ -45,7 +45,8 @@ entanglement = 'linear'
 #aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 #hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 #print(hf)
-hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock()
+hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
+#print(hfstate)
 #print(hfstate)
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
 myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit',hfstate)
@@ -59,11 +60,9 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 # Print the minimum eigenvalue and corresponding eigenvector
 
 #myaavqe.initial_hamiltonian()
-myaavqe.alternative_run()
 #print(myaavqe.draw_latex())
 # Print the non-zero elements and their positions
-#myaavqe.initial_hamiltonian()
-#myaavqe.alternative_run()
+myaavqe.alternative_run()
 #print(myaavqe.draw_latex())
 
 

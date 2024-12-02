@@ -21,8 +21,7 @@ def integrate_code_into_latex(file_path, highlight_lines=None, output_file="outp
     
     # Generate LaTeX code
     latex_template = r"""
-\begin{frame}[fragile]{}
-    \begin{minted}
+\begin{minted}
         [
         frame=lines,
         framesep=2mm,
@@ -33,8 +32,7 @@ def integrate_code_into_latex(file_path, highlight_lines=None, output_file="outp
         ]
         {python}
 """ + code_content + r"""
-    \end{minted}
-\end{frame}
+\end{minted}
 """
     
     # Write LaTeX code to the output file
@@ -44,8 +42,8 @@ def integrate_code_into_latex(file_path, highlight_lines=None, output_file="outp
     print(f"LaTeX code successfully saved to {output_file}")
 
 
-file_path = "/home/sean/PhD Project/Coding Projects/The Coding Project/AQCPQCstuff/main.py"  # Path to your Python file
+file_path = "/home/sean/PhD Project/Coding Projects/The Coding Project/AQCPQCstuff/for_highlighted_code.py"  # Path to your Python file
 highlight_lines = [2, 13]  # Lines to highlight
-output_file = "highlighted_code.tex"  # Name of the LaTeX output file
+output_file = "highlighted_code.txt"  # Name of the LaTeX output file
 
 integrate_code_into_latex(file_path, highlight_lines, output_file)
