@@ -10,7 +10,7 @@ from aqc_qaoa import AQC_PQC_QAOA
 from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
-from qiskit_aer import Aer
+#from qiskit_aer import Aer
 #chemical accuracy
 backend = Aer.get_backend('statevector_simulator')
 
