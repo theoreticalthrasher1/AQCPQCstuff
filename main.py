@@ -12,7 +12,7 @@ from aavqe import *
 from qiskit_algorithms.utils import algorithm_globals
 #from qiskit_aer import Aer
 #chemical accuracy
-backend = Aer.get_backend('statevector_simulator')
+#backend = Aer.get_backend('statevector_simulator')
 
 #We've put a minus sign in front of the initial hf hamiltonian, 
 #final hamiltonian might be wrong? Also, we don't need an offset. 

@@ -39,7 +39,7 @@ class My_AAVQE():
             self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
         elif  self.string_initial_hamiltonian == 'paper':
             self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
-            self.initial_parameters[6]=np.pi
+            self.initial_parameters[6]=np.pi #The ground state of the initial Hamiltonian in the paper is |0110> 
             self.initial_parameters[7]=np.pi
         else:
             self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
