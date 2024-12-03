@@ -49,7 +49,7 @@ hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 #print(hfstate)
 #print(hfstate)
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'qiskit_hf','qiskit',hfstate)
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'transverse','qiskit',hfstate)
 #print(myaavqe.initial_hamiltonian)
 #H=myaavqe.initial_hamiltonian
 # Assuming `H` is your operator

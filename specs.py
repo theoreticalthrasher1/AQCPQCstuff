@@ -19,8 +19,13 @@ hamiltonian_methods = {
         'paper': {
             'description': 'Use Hartree-Fock from a specific paper (custom implementation)',
             'generate': lambda molecule, taper, freezecore:IBM_LiH_initial
-        }
+        },
+        'transverse': {
+            'description': 'The transverse Hamiltonian',
+            'generate': lambda molecule, taper, freezecore, number_of_qubits: None
+        },
     },
+    
     'final': {
         'qiskit': {
             'description': 'Use final Hamiltonian from a paper-specific method',

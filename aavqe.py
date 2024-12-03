@@ -21,7 +21,7 @@ class My_AAVQE():
         self.initial_state=initial_state   
         self.steps = steps
         self.string_initial_hamiltonian=initial_hamiltonian
-        self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore)
+        self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore,number_of_qubits=None)
         self.string_final_hamiltonian=target_hamiltonian
         self.offset=0
         self.layers = layers
@@ -35,7 +35,7 @@ class My_AAVQE():
 
             for i in range(number_of_qubits):
                 X_tuples.append(('X', [i], -1))
-
+            self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
             self.initial_hamiltonian = SparsePauliOp.from_sparse_list([*X_tuples], num_qubits = number_of_qubits)
         elif  self.string_initial_hamiltonian == 'paper':
             self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]

@@ -43,7 +43,7 @@ def integrate_code_into_latex(file_path, highlight_lines=None, output_file="outp
 
 
 file_path = "/home/sean/PhD Project/Coding Projects/The Coding Project/AQCPQCstuff/for_highlighted_code.py"  # Path to your Python file
-highlight_lines = [2, 13]  # Lines to highlight
+highlight_lines = []  # Lines to highlight
 output_file = "highlighted_code.txt"  # Name of the LaTeX output file
 
 integrate_code_into_latex(file_path, highlight_lines, output_file)
