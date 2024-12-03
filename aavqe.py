@@ -21,7 +21,7 @@ class My_AAVQE():
         self.initial_state=initial_state   
         self.steps = steps
         self.string_initial_hamiltonian=initial_hamiltonian
-        self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore,number_of_qubits=None)
+        self.initial_hamiltonian=hamiltonian_methods['initial'][initial_hamiltonian]['generate'](molecule,taper,freezecore,number_of_qubits)
         self.string_final_hamiltonian=target_hamiltonian
         self.offset=0
         self.layers = layers
@@ -45,7 +45,7 @@ class My_AAVQE():
             self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
             self.initial_parameters[8]=np.pi
             self.initial_parameters[12]=np.pi
-        self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore)
+        self.target_hamiltonian=hamiltonian_methods['final'][target_hamiltonian]['generate'](molecule, taper, freezecore, number_of_qubits)
         
        #
        # self.initial_parameters = QCir(self.number_of_qubits,'initial' ,self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement).get_initial_parameters()

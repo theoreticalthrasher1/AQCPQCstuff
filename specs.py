@@ -9,16 +9,16 @@ hamiltonian_methods = {
     'initial': {
         'qiskit_hf': {
             'description': 'This is a simple Hartree-Fock Hamiltonian.',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+            'generate': lambda molecule, taper, freezecore,number_of_qubits: Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
         'qiskit_hf_and_energy': {
             'description': 'This is a simple Hartree-Fock Hamiltonian, multiplied by the Hartree-fock energy.',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
+            'generate': lambda molecule, taper, freezecore,number_of_qubits: Moleculeclass(molecule, taper, freezecore).get_hartreefock_energy()* Moleculeclass(molecule, taper, freezecore).get_hartreefock_in_pauli()
         },
 
         'paper': {
             'description': 'Use Hartree-Fock from a specific paper (custom implementation)',
-            'generate': lambda molecule, taper, freezecore:IBM_LiH_initial
+            'generate': lambda molecule, taper, freezecore, number_of_qubits:IBM_LiH_initial
         },
         'transverse': {
             'description': 'The transverse Hamiltonian',
@@ -29,11 +29,11 @@ hamiltonian_methods = {
     'final': {
         'qiskit': {
             'description': 'Use final Hamiltonian from a paper-specific method',
-            'generate': lambda molecule, taper, freezecore: Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
+            'generate': lambda molecule, taper, freezecore, number_of_qubits: Moleculeclass(molecule, taper,freezecore).get_qubit_operator()
         },
         'paper': {
             'description': 'Use Qiskit for final Hamiltonian (if different from initial)',
-            'generate': lambda molecule, taper, freezecore: IBM_LiH
+            'generate': lambda molecule, taper, freezecore, number_of_qubits: IBM_LiH
         }
     }
 }

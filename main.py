@@ -31,7 +31,7 @@ from qiskit_algorithms.utils import algorithm_globals
 # shot = 6000
 
 seed = 3
-number_of_qubits = 8
+number_of_qubits = 4
 steps = 10#Choose number of steps to interpolate from initial to final Hamiltonian
 connectivity = 'nearest-neighbors' #This is the connectivity of the non-parameterized gates in the Hardware-Efficient ansatz
 single_qubit_gates = 'ry'
@@ -49,7 +49,7 @@ hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 #print(hfstate)
 #print(hfstate)
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'transverse','qiskit',hfstate)
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'paper','paper',hfstate)
 #print(myaavqe.initial_hamiltonian)
 #H=myaavqe.initial_hamiltonian
 # Assuming `H` is your operator
