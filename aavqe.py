@@ -205,14 +205,17 @@ class AAVQE():
         self.qcir.decompose().draw(output='mpl')
         plt.show()
     def get_expectation_value(self, angles, observable):
+        print("Calling StatevectorEstimator",flush=True)
+
         estimator = StatevectorEstimator()
        
        
         pub = (self.qcir, observable, angles)
+        print("hello world")
+        print(f"pub: {pub}")
         job = estimator.run([pub])
         result = job.result()[0]
         expectation_value = result.data.evs
-
         return np.real(expectation_value)
     
     
