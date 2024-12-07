@@ -2,14 +2,14 @@ from aqc_pqc import AQC_PQC
 from hamiltonian import Hamiltonian 
 from quantum_circuit import QCir
 import networkx as nx
-import numpy as np
+import numpy as nps
 from brute_force import Brute_Force
 from qaoa_circuit import QAOA_Circuit
 
 from aqc_qaoa import AQC_PQC_QAOA
 from Quantum_Chemistry import Moleculeclass,Solvebynumpy
 from aavqe import *
-from qiskit_algorithms.utils import algorithm_globals
+#unfrom qiskit_algorithms.utils import algorithm_globals
 #from qiskit_aer import Aer
 #chemical accuracy
 #backend = Aer.get_backend('statevector_simulator')
@@ -39,17 +39,19 @@ entanglement_gates = 'cz'
 layers = 1
 entanglement = 'linear'
 
-
+problem={'type':'IBM','properties':None}
 
 
 #aavqechem=AAVQE_on_Chemistry(molecule, taper,freezecore,steps, layers, single_qubit_gates, entanglement_gates,entanglement)
 #hf=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
 #print(hf)
-hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
+
+#hfstate=Moleculeclass(molecule,taper,freezecore).get_hartreefock_in_pauli()
+
 #print(hfstate)
 #print(hfstate)
 #myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,hf,qubitop)
-myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'paper','paper',hfstate)
+myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_gates,entanglement,'paper','paper')
 #print(myaavqe.initial_hamiltonian)
 #H=myaavqe.initial_hamiltonian
 # Assuming `H` is your operator
@@ -61,8 +63,8 @@ myaavqe=My_AAVQE(number_of_qubits,steps,layers,single_qubit_gates,entanglement_g
 
 #myaavqe.initial_hamiltonian()
 #print(myaavqe.draw_latex())
-# Print the non-zero elements and their positions
-myaavqe.alternative_run()
+# Print the non-zero elements and their positions      
+#myaavqe.alternative_run()
 #print(myaavqe.draw_latex())
 
 
@@ -79,9 +81,8 @@ myaavqe.alternative_run()
 #aqc_pqc = AQC_PQC_QAOA(number_of_qubits, problem, steps, layers, use_null_space=True) #Uncomment if you want to use QAOA ansatz.
 #aqc_pqc.run()
 
-#aqc_pqc = AQC_PQC(number_of_qubits, problem, steps, layers, single_qubit_gates,
-#                  entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
-#aqc_pqc.run()
+aqc_pqc = AQC_PQC(number_of_qubits,problem, steps, layers, single_qubit_gates,entanglement_gates, entanglement, use_null_space=True, use_third_derivatives=False)
+aqc_pqc.run()
 #print(hf)
 #myaavqe.run()
 

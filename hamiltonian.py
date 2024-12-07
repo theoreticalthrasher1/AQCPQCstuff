@@ -1,7 +1,7 @@
 import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_optimization.applications import Maxcut, NumberPartition
-
+from ManualOperator import *
 
 class Hamiltonian():
 
@@ -27,8 +27,14 @@ class Hamiltonian():
             num_par = NumberPartition(number_list)
             qp = num_par.to_quadratic_program()
             qubitOp, offset = qp.to_ising()
+    
+        elif self.problem_type == 'IBM':
+            
+            qubitOp = IBM_LiH
+            offset  = 0
 
         return qubitOp, offset
+    
     
     def get_transverse_hamiltonian(self, number_of_qubits, alternative=False):
         X_tuples = []
@@ -55,8 +61,8 @@ class Hamiltonian():
         return hamiltonian
 
 
-    def seans_initial_hamiltonian(self):
-        pass
+    def IBM_initial_hamiltonian(self):
+        return IBM_LiH_initial
 
     def seans_target_hamiltonian(self):
         pass

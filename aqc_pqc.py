@@ -6,7 +6,7 @@ from quantum_circuit import QCir
 from qiskit.primitives import Estimator, StatevectorEstimator
 from qiskit.circuit.library import TwoLocal
 from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
-
+from ManualOperator import *
 
 class AQC_PQC():
     def __init__(self, number_of_qubits, problem, steps, layers, single_qubit_gates, entanglement_gates, entanglement, use_third_derivatives = False, use_null_space = False, use_null_derivatives = False):
@@ -24,13 +24,18 @@ class AQC_PQC():
 
         qcir = QCir(self.number_of_qubits, 'initial', self.layers, self.single_qubit_gates, self.entanglement_gates, self.entanglement)
 
-        self.initial_parameters = qcir.get_initial_parameters()
+        #self.initial_parameters = qcir.get_initial_parameters()
+        
+        self.initial_parameters=[0 for x in range(self.number_of_qubits*(self.layers+1))]
+        self.initial_parameters[6]=np.pi #The ground state of the initial Hamiltonian in the paper is |0110> 
+        self.initial_parameters[7]=np.pi
         self.number_of_parameters = len(self.initial_parameters)
 
         hamiltonians = Hamiltonian(self.problem)
 
         self.target_hamiltonian, self.offset = hamiltonians.get_pauli_operator_and_offset()
-        self.initial_hamiltonian = hamiltonians.get_transverse_hamiltonian(self.number_of_qubits)
+        # self.initial_hamiltonian = hamiltonians.get_transverse_hamiltonian(self.number_of_qubits)
+        self.initial_hamiltonian = IBM_LiH_initial
 
         self.qcir = TwoLocal(self.number_of_qubits, self.single_qubit_gates, self.entanglement_gates, self.entanglement, self.layers)
 
@@ -270,7 +275,7 @@ class AQC_PQC():
     def minimum_eigenvalue(self, matrix):
 
         min_eigen = np.min(np.linalg.eig(matrix)[0])
-        print(min_eigen)
+        #print(min_eigen)
         return min_eigen
 
     def run(self):
